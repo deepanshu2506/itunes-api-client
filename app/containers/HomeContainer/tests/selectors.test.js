@@ -1,21 +1,21 @@
-import { selectHomeContainer, selectRepoName, selectReposData, selectReposError } from '../selectors';
+import { selectHomeContainer, selectSearchTerm, selectSongs, selectSongsError } from '../selectors';
 
 describe('HomeContainer selector tests', () => {
   let mockedState;
-  let repoName;
-  let reposData;
-  let reposError;
+  let searchTerm;
+  let songs;
+  let songsError;
 
   beforeEach(() => {
-    repoName = 'mac';
-    reposData = { totalCount: 1, items: [{ repoName }] };
-    reposError = 'There was some error while fetching the repository details';
+    searchTerm = 'mac';
+    songs = [{ searchTerm }];
+    songsError = 'There was some error while fetching the repository details';
 
     mockedState = {
       homeContainer: {
-        repoName,
-        reposData,
-        reposError
+        searchTerm,
+        songs,
+        songsError
       }
     };
   });
@@ -23,18 +23,18 @@ describe('HomeContainer selector tests', () => {
     const homeContainerSelector = selectHomeContainer();
     expect(homeContainerSelector(mockedState)).toEqual(mockedState.homeContainer);
   });
-  it('should select the repoName', () => {
-    const repoSelector = selectRepoName();
-    expect(repoSelector(mockedState)).toEqual(repoName);
+  it('should select the searchTerm', () => {
+    const repoSelector = selectSearchTerm();
+    expect(repoSelector(mockedState)).toEqual(searchTerm);
   });
 
-  it('should select reposData', () => {
-    const reposDataSelector = selectReposData();
-    expect(reposDataSelector(mockedState)).toEqual(reposData);
+  it('should select songs', () => {
+    const reposDataSelector = selectSongs();
+    expect(reposDataSelector(mockedState)).toEqual(songs);
   });
 
-  it('should select the reposError', () => {
-    const reposErrorSelector = selectReposError();
-    expect(reposErrorSelector(mockedState)).toEqual(reposError);
+  it('should select the songsError', () => {
+    const reposErrorSelector = selectSongsError();
+    expect(reposErrorSelector(mockedState)).toEqual(songsError);
   });
 });

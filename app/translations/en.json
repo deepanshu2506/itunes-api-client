@@ -1,14 +1,14 @@
 {
-  "repo_list": "Repository List",
-  "repo_search": "Repository Search",
-  "respo_search_default": "Search for a repository by entering it's name in the search box",
-  "get_repo_details": "Get details of repositories",
-  "search_query": "Search query: {repoName}",
-  "matching_repos": "Total number of matching repos: {totalCount}",
+  "iTunes_search": "iTunes Search",
+  "itunes_search_default": "Search for a Tunes by entering text in the search box",
+  "get_search_results": "Get Search Results from iTunes",
+  "search_query": "Search query: {searchTerm}",
+  "results_count": "Results fetched: {totalCount}",
   "something_went_wrong": "Sorry. Something went wrong! Please try again in sometime.",
-  "stories": "Go to Storybook",
-  "repository_name": "Repository Name: {name}",
-  "repository_full_name": "Repository full name: {fullName}",
-  "repository_stars": "Repository stars: {stars}",
-  "wednesday_solutions": "Wednesday Solutions"
+  "wednesday_solutions": "Wednesday Solutions",
+  "artist_label": "Artists: ",
+  "buy_now": "Buy now for ",
+  "buy_collection": "Buy Collection for",
+  "go_to": "GO to ",
+  "text": "{text}"
 }

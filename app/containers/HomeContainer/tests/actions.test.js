@@ -1,11 +1,11 @@
 import { homeContainerTypes, homeContainerCreators } from '../reducer';
 
 describe('HomeContainer action tests', () => {
-  it('has a type of REQUEST_GET_GITHUB_REPOS', () => {
+  it('has a type of REQUEST_SONGS', () => {
     const expected = {
-      type: homeContainerTypes.REQUEST_GET_GITHUB_REPOS,
-      repoName: 'repoName'
+      type: homeContainerTypes.REQUEST_SONGS,
+      searchTerm: 'searchTerm'
     };
-    expect(homeContainerCreators.requestGetGithubRepos('repoName')).toEqual(expected);
+    expect(homeContainerCreators.requestSongs('searchTerm')).toEqual(expected);
   });
 });

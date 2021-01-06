@@ -1,22 +1,32 @@
 import { create } from 'apisauce';
 import snakeCase from 'lodash/snakeCase';
 import camelCase from 'lodash/camelCase';
+import upperCase from 'lodash/upperCase';
 import { mapKeysDeep } from './index';
 
-const { GITHUB_URL } = process.env;
+const APIs = { GITHUB_URL: process.env.GITHUB_URL, ITUNES_URL: process.env.ITUNES_URL };
+
 const apiClients = {
   github: null,
-  default: null
+  default: null,
+  itunes: null
 };
-export const getApiClient = (type = 'github') => apiClients[type];
+
+const generateApiUrl = type => {
+  const envKey = `${upperCase(type)}_URL`;
+  return APIs[envKey];
+};
+export const getApiClient = (type = 'github') => {
+  return apiClients[type];
+};
 export const generateApiClient = (type = 'github') => {
-  switch (type) {
-    case 'github':
-      apiClients[type] = createApiClientWithTransForm(GITHUB_URL);
-      return apiClients[type];
-    default:
-      apiClients.default = createApiClientWithTransForm(GITHUB_URL);
-      return apiClients.default;
+  const API_URL = generateApiUrl(type);
+  if (Object.keys(apiClients).includes(type)) {
+    apiClients[type] = createApiClientWithTransForm(API_URL);
+    return apiClients[type];
+  } else {
+    apiClients.default = createApiClientWithTransForm(API_URL);
+    return apiClients.default;
   }
 };
 

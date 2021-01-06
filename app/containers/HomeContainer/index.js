@@ -3,30 +3,22 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
-import get from 'lodash/get';
 import debounce from 'lodash/debounce';
+import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
-import { Card, Skeleton, Input } from 'antd';
+import { Skeleton, Input } from 'antd';
 import styled from 'styled-components';
 import { injectIntl } from 'react-intl';
-import { useHistory } from 'react-router-dom';
 import T from '@components/T';
-import Clickable from '@components/Clickable';
 import { useInjectSaga } from 'utils/injectSaga';
-import { selectHomeContainer, selectReposData, selectReposError, selectRepoName } from './selectors';
+import { selectHomeContainer, selectSongs, selectSongsError, selectSearchTerm } from './selectors';
 import { homeContainerCreators } from './reducer';
+import { StyledCard } from '@components/Cards';
 import saga from './saga';
+import { SongCard } from '@app/components/Cards/index';
 
 const { Search } = Input;
 
-const CustomCard = styled(Card)`
-  && {
-    margin: 20px 0;
-    max-width: ${props => props.maxwidth};
-    color: ${props => props.color};
-    ${props => props.color && `color: ${props.color}`};
-  }
-`;
 const Container = styled.div`
   && {
     display: flex;
@@ -37,17 +29,14 @@ const Container = styled.div`
     padding: ${props => props.padding}px;
   }
 `;
-const RightContent = styled.div`
-  display: flex;
-  align-self: flex-end;
-`;
+
 export function HomeContainer({
-  dispatchGithubRepos,
-  dispatchClearGithubRepos,
+  dispatchGetSongs,
+  dispatchClearSongs,
   intl,
-  reposData = {},
-  reposError = null,
-  repoName,
+  songs,
+  songsError = null,
+  searchTerm,
   maxwidth,
   padding
 }) {
@@ -55,95 +44,84 @@ export function HomeContainer({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const loaded = get(reposData, 'items', null) || reposError;
+    const loaded = songs || songsError;
     if (loading && loaded) {
       setLoading(false);
     }
-  }, [reposData]);
+  }, [songs]);
 
   useEffect(() => {
-    if (repoName && !reposData?.items?.length) {
-      dispatchGithubRepos(repoName);
+    if (searchTerm && !songs?.length) {
+      dispatchGetSongs(searchTerm);
       setLoading(true);
     }
   }, []);
 
-  const history = useHistory();
-
-  const handleOnChange = rName => {
-    if (!isEmpty(rName)) {
-      dispatchGithubRepos(rName);
+  const handleOnChange = searchTerm => {
+    if (!isEmpty(searchTerm)) {
+      dispatchGetSongs(searchTerm);
       setLoading(true);
     } else {
-      dispatchClearGithubRepos();
+      dispatchClearSongs();
     }
   };
   const debouncedHandleOnChange = debounce(handleOnChange, 200);
 
   const renderRepoList = () => {
-    const items = get(reposData, 'items', []);
-    const totalCount = get(reposData, 'totalCount', 0);
+    const items = songs || [];
+    const totalCount = get(songs, 'length', 0);
+
     return (
-      (items.length !== 0 || loading) && (
-        <CustomCard>
+      (totalCount !== 0 || loading) && (
+        <StyledCard>
           <Skeleton loading={loading} active>
-            {repoName && (
+            {searchTerm && (
               <div>
-                <T id="search_query" values={{ repoName }} />
+                <T id="search_query" values={{ searchTerm }} />
               </div>
             )}
             {totalCount !== 0 && (
               <div>
-                <T id="matching_repos" values={{ totalCount }} />
+                <T id="results_count" values={{ totalCount }} />
               </div>
             )}
-            {items.map((item, index) => (
-              <CustomCard key={index}>
-                <T id="repository_name" values={{ name: item.name }} />
-                <T id="repository_full_name" values={{ fullName: item.fullName }} />
-                <T id="repository_stars" values={{ stars: item.stargazersCount }} />
-              </CustomCard>
-            ))}
+            {items.map((item, index) => {
+              return <SongCard key={index} song={item} />;
+            })}
           </Skeleton>
-        </CustomCard>
+        </StyledCard>
       )
     );
   };
   const renderErrorState = () => {
-    let repoError;
-    if (reposError) {
-      repoError = reposError;
-    } else if (!get(reposData, 'totalCount', 0)) {
-      repoError = 'respo_search_default';
+    let songError;
+    if (songsError) {
+      songError = songsError;
+    } else if (!get(songs, 'length', 0)) {
+      songError = 'itunes_search_default';
     }
     return (
       !loading &&
-      repoError && (
-        <CustomCard color={reposError ? 'red' : 'grey'} title={intl.formatMessage({ id: 'repo_list' })}>
-          <T id={repoError} />
-        </CustomCard>
+      songError && (
+        <StyledCard color={songsError ? 'red' : 'grey'} title={intl.formatMessage({ id: 'iTunes_search' })}>
+          <T id={songError} />
+        </StyledCard>
       )
     );
   };
-  const refreshPage = () => {
-    history.push('stories');
-    window.location.reload();
-  };
+
   return (
     <Container maxwidth={maxwidth} padding={padding}>
-      <RightContent>
-        <Clickable textId="stories" onClick={refreshPage} />
-      </RightContent>
-      <CustomCard title={intl.formatMessage({ id: 'repo_search' })} maxwidth={maxwidth}>
-        <T marginBottom={10} id="get_repo_details" />
+      <StyledCard title={intl.formatMessage({ id: 'iTunes_search' })} maxwidth={maxwidth}>
+        <T marginBottom={10} id="get_search_results" />
         <Search
           data-testid="search-bar"
-          defaultValue={repoName}
+          defaultValue={searchTerm}
           type="text"
           onChange={evt => debouncedHandleOnChange(evt.target.value)}
           onSearch={searchText => debouncedHandleOnChange(searchText)}
         />
-      </CustomCard>
+      </StyledCard>
       {renderRepoList()}
       {renderErrorState()}
     </Container>
@@ -151,38 +129,34 @@ export function HomeContainer({
 }
 
 HomeContainer.propTypes = {
-  dispatchGithubRepos: PropTypes.func,
-  dispatchClearGithubRepos: PropTypes.func,
+  dispatchGetSongs: PropTypes.func,
+  dispatchClearSongs: PropTypes.func,
   intl: PropTypes.object,
-  reposData: PropTypes.shape({
-    totalCount: PropTypes.number,
-    incompleteResults: PropTypes.bool,
-    items: PropTypes.array
-  }),
-  reposError: PropTypes.object,
-  repoName: PropTypes.string,
+  songs: PropTypes.array,
+  songsError: PropTypes.object,
+  searchTerm: PropTypes.string,
   history: PropTypes.object,
   maxwidth: PropTypes.number,
   padding: PropTypes.number
 };
 
 HomeContainer.defaultProps = {
-  maxwidth: 500,
+  maxwidth: 800,
   padding: 20
 };
 
 const mapStateToProps = createStructuredSelector({
   homeContainer: selectHomeContainer(),
-  reposData: selectReposData(),
-  reposError: selectReposError(),
-  repoName: selectRepoName()
+  songs: selectSongs(),
+  songsError: selectSongsError(),
+  searchTerm: selectSearchTerm()
 });
 
 function mapDispatchToProps(dispatch) {
-  const { requestGetGithubRepos, clearGithubRepos } = homeContainerCreators;
+  const { requestSongs, clearSongs } = homeContainerCreators;
   return {
-    dispatchGithubRepos: repoName => dispatch(requestGetGithubRepos(repoName)),
-    dispatchClearGithubRepos: () => dispatch(clearGithubRepos())
+    dispatchGetSongs: searchTerm => dispatch(requestSongs(searchTerm)),
+    dispatchClearSongs: () => dispatch(clearSongs())
   };
 }
 

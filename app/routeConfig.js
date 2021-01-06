@@ -4,7 +4,7 @@ import routeConstants from '@utils/routeConstants';
 export const routeConfig = {
   repos: {
     component: HomeContainer,
-    ...routeConstants.repos
+    ...routeConstants.songs
   },
   notFoundPage: {
     component: NotFound,

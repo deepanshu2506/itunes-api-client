@@ -2,7 +2,7 @@ import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
 @import 'antd/dist/antd.less';
-  html,
+html,
   body {
     height: 100vh;
     width: 100vw;
@@ -11,11 +11,11 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'roboto', Helvetica, Arial, sans-serif;
   }
 
   body.fontLoaded {
-    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   }
 
   #app {
@@ -28,7 +28,7 @@ const GlobalStyle = createGlobalStyle`
   span,
   button,
   label {
-    font-family: Georgia, Times, 'Times New Roman', serif;
+    font-family: roboto, Helvetica, Arial, sans-serif;
     line-height: 1.5em;
     margin-bottom: 0;
   }

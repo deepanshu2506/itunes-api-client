@@ -11,34 +11,34 @@ describe('HomContainer reducer tests', () => {
     expect(homeContainerReducer(undefined, {})).toEqual(state);
   });
 
-  it('should return the initial state when an action of type FETCH_USER is dispatched', () => {
-    const repoName = 'Mohammed Ali Chherawalla';
-    const expectedResult = { ...state, repoName };
+  it('should return the initial state when an action of type  is dispatched', () => {
+    const searchTerm = 'perfect';
+    const expectedResult = { ...state, searchTerm };
     expect(
       homeContainerReducer(state, {
-        type: homeContainerTypes.REQUEST_GET_GITHUB_REPOS,
-        repoName
+        type: homeContainerTypes.REQUEST_SONGS,
+        searchTerm
       })
     ).toEqual(expectedResult);
   });
 
-  it('should ensure that the user data is present and userLoading = false when FETCH_USER_SUCCESS is dispatched', () => {
-    const data = { name: 'Mohammed Ali Chherawalla' };
-    const expectedResult = { ...state, reposData: data };
+  it('should ensure that the songs List is present and loading = false when SUCCESS_GET_SONGS is dispatched', () => {
+    const data = [{ name: 'perfect' }, { name: 'hello' }];
+    const expectedResult = { ...state, songs: data };
     expect(
       homeContainerReducer(state, {
-        type: homeContainerTypes.SUCCESS_GET_GITHUB_REPOS,
-        data
+        type: homeContainerTypes.SUCCESS_GET_SONGS,
+        data: { results: data }
       })
     ).toEqual(expectedResult);
   });
 
-  it('should ensure that the userErrorMessage has some data and userLoading = false when FETCH_USER_FAILURE is dispatched', () => {
-    const error = 'something_went_wrong';
-    const expectedResult = { ...state, reposError: error };
+  it('should ensure that the SongsErrorMessage has some data and loading = false when FAILURE_GET_SONGS is dispatched', () => {
+    const error = { message: 'something_went_wrong' };
+    const expectedResult = { ...state, songsError: error.message };
     expect(
       homeContainerReducer(state, {
-        type: homeContainerTypes.FAILURE_GET_GITHUB_REPOS,
+        type: homeContainerTypes.FAILURE_GET_SONGS,
         error
       })
     ).toEqual(expectedResult);

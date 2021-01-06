@@ -50,6 +50,7 @@ const light = () => css`
 `;
 const bold = () => css`
   font-weight: bold;
+  ${xRegular()}
 `;
 
 const normal = () => css`
@@ -77,8 +78,16 @@ const subText = () => css`
   ${normal()}
 `;
 
+const combineFonts = (...fonts) => () => {
+  const styles = fonts.reduce((acc, curr) => acc + curr(), '');
+  return css`
+    ${styles}
+  `;
+};
+
 export default {
   dynamicFontSize,
+  combineFonts,
   size: {
     regular,
     small,

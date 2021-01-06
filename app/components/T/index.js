@@ -11,24 +11,35 @@ import { PropTypes } from 'prop-types';
 import If from '@components/If';
 import { fonts } from '@app/themes';
 
-const StyledText = styled.p`
+const StyledParagraph = styled.p`
+  && {
+    ${props => props.marginBottom && `margin-bottom: ${props.marginBottom}px;`};
+    ${props => props.font()};
+  }
+`;
+
+const StyledSpan = styled.span`
   && {
     ${props => props.marginBottom && `margin-bottom: ${props.marginBottom}px;`};
     ${props => props.font()};
   }
 `;
 const getFontStyle = type => (fonts.style[type] ? fonts.style[type] : () => {});
-export const T = ({ type, text, id, marginBottom, values, ...otherProps }) => (
-  <StyledText data-testid="t" font={getFontStyle(type)} marginBottom={marginBottom} {...otherProps}>
-    <If condition={id} otherwise={text}>
-      <FormattedMessage id={id} values={values} />
-    </If>
-  </StyledText>
-);
+export const T = ({ type, text, id, marginBottom, values, span, ...otherProps }) => {
+  const TextContainer = span ? StyledSpan : StyledParagraph;
+  return (
+    <TextContainer data-testid="t" font={getFontStyle(type)} marginBottom={marginBottom} {...otherProps}>
+      <If condition={id} otherwise={text}>
+        <FormattedMessage id={id} values={values} />
+      </If>
+    </TextContainer>
+  );
+};
 
 T.propTypes = {
   id: PropTypes.string,
   marginBottom: PropTypes.number,
+  span: PropTypes.bool,
   values: PropTypes.object,
   text: PropTypes.string,
   type: PropTypes.oneOfType(Object.keys(fonts.style))

@@ -1,8 +1,8 @@
 export default {
-  repos: {
+  songs: {
     route: '/',
     props: {
-      maxwidth: 500,
+      maxwidth: 800,
       padding: 20
     },
     exact: true
